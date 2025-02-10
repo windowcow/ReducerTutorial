@@ -36,7 +36,6 @@ struct CellView: View {
 struct Cell {
     @ObservableState
     struct State {
-        // MARK: SHARED
         @Shared(.currentTurnPlayer) var currentTurnPlayer = .o
 
         let index: Int
@@ -53,27 +52,24 @@ struct Cell {
         }
         
         enum DelegateAction {
-            case validateMove
+            case occupiedEventHappened
         }
     }
-    /**
-    전략:
-     탭 -> 보드에 검증 -> 보드가 setOwner 시키거나, 무효시키거나, 승리 시킨다.
-     
-     */
+
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .view(.tapped):
-                return .run { send in await send(.delegate(.validateMove)) }
-            
-            case .delegate(.validateMove):
-                // 사실상 이 경우는 실행이 되지 않는 경우이다.
-                return .none
+                let isAlreadyOccupied = state.owner != nil
+                guard !isAlreadyOccupied else { return .none } // 이미 있는 경우에는 중단 (또는 alert animation)
+                
+                return .send(.setOwner(state.currentTurnPlayer)) // 주인이 없으면 주인 설정
                 
             case .setOwner:
                 state.owner = state.currentTurnPlayer
+                return .send(.delegate(.occupiedEventHappened)) // 주인 설정 후에는 Board에 게임 결과 검증 시작
                 
+            case .delegate(.occupiedEventHappened):
                 return .none
             }
         }
@@ -83,8 +79,3 @@ struct Cell {
 extension Cell.State: Identifiable {
     var id: Int { index }
 }
-
-
-// Board(Delegate)에게 처리 방법을 물어본다.
-// 자기가 멋대로 놓아버린다면 문제가 생긴다 -> 그건 아니다 setOwner에 Delegate로 계산 요청하면 된다.
-// 문제는. Cell은 현재 누구 차례인지를 모른다는거다. -> Shared로 해결
