@@ -10,13 +10,13 @@ import ComposableArchitecture
 
 @main
 struct ReducerTutorialApp: App {
-    static let store = Store(initialState: CounterFeature.State(count: 1)) {
-        CounterFeature()
+    static let store = Store(initialState: AppFeature.State()) {
+        AppFeature()
     }
     
     var body: some Scene {
         WindowGroup {
-            ContentView(store: ReducerTutorialApp.store)
+            AppView(store: ReducerTutorialApp.store)
         }
     }
 }
