@@ -28,39 +28,44 @@ struct Board {
     @ObservableState
     struct State {
         @Shared(.currentTurnPlayer) var currentTurnPlayer = .o
-        
-//        @Presents
-        
         var cells: IdentifiedArrayOf<Cell.State> = .init(uniqueElements: (0..<9).map { i in Cell.State(index: i) })
     }
     
     enum Action: Sendable {
         case cells(IdentifiedActionOf<Cell>)
         case checkWinner
+        case nextTurn
+        case delegate(GameAction) // GameFeature에 로 점수 업데이트를 시킨다.
+        
+        enum GameAction {
+            case updateWinnerScore(Player)
+        }
     }
     
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case .cells(.element(id: _, action: .delegate(.occupiedEventHappened))) :
+            case .cells(.element(id: _, action: .delegate(.occupiedEventHappened))):
                 return .send(.checkWinner)
-                
+
             case .checkWinner:
-                let winner = self.winner(state)
-                
-                if let winner {
-                    
+                if let winner = self.winner(state) {
+                    return .send(.delegate(.updateWinnerScore(winner)))
                 } else {
-                    state.$currentTurnPlayer.withLock { currentTurnPlayer in
-                        currentTurnPlayer = currentTurnPlayer.nextPlayer()
-                    }
-                    
-                    return .none
+                    return .send(.nextTurn)
                 }
                 
-            default:
+            case .nextTurn:
+                state.$currentTurnPlayer.withLock { currentTurnPlayer in
+                    currentTurnPlayer = currentTurnPlayer.nextPlayer()
+                }
+                
                 return .none
+                
+            case .delegate: return .none
+            default: return .none
             }
+            
         }
         .forEach(\.cells, action: \.cells) {
             Cell()

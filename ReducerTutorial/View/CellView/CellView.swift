@@ -51,6 +51,7 @@ struct Cell {
             case tapped
         }
         
+        @CasePathable
         enum DelegateAction {
             case occupiedEventHappened
         }
