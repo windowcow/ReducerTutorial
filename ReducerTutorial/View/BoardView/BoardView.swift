@@ -64,21 +64,23 @@ struct Board {
                 
             case .delegate: return .none
             default: return .none
+                
             }
             
         }
         .forEach(\.cells, action: \.cells) {
             Cell()
         }
+        ._printChanges()
     }
 }
 
 extension Board {
     private func hasWin(_ state: State, player: Player) -> Bool {
         let winConditions = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8], // 가로
-            [0, 3, 6], [1, 4, 7], [2, 5, 8], // 세로
-            [0, 4, 8], [6, 4, 2],            // 대각선
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [6, 4, 2],
         ]
 
         for condition in winConditions {

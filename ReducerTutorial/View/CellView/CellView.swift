@@ -15,9 +15,9 @@ struct CellView: View {
     let store: StoreOf<Cell>
     
     var body: some View {
-        RoundedRectangle(cornerRadius: 30)
+        Circle()
             .foregroundStyle(.gray)
-            .border(Color.black, width: 3)
+            .aspectRatio(1, contentMode: .fit)
             .overlay {
                 if store.owner == .o {
                     Text("O")
@@ -25,7 +25,6 @@ struct CellView: View {
                     Text("X")
                 }
             }
-            .aspectRatio(1, contentMode: .fit)
             .onTapGesture {
                 send(.tapped)
             }
@@ -74,6 +73,7 @@ struct Cell {
                 return .none
             }
         }
+        ._printChanges()
     }
 }
 

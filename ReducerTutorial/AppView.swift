@@ -9,55 +9,54 @@ import SwiftUI
 import ComposableArchitecture
 
 struct AppView: View {
-    let store: StoreOf<AppFeature>
+    let store: StoreOf<AppReducer> = Store(initialState: AppReducer.State()) {
+        AppReducer()
+    }
     
     var body: some View {
-        TabView {
-            Tab {
-                ContentView(store: store.scope(state: \.tab1, action: \.tab1))
-            } label: {
-                Image(systemName: "house")
-            }
-            
-            Tab {
-                BoardView(
-                    store: StoreOf<Board>(initialState: Board.State()) {
-                        Board()
-                    }
-                )
-                
-                ContentView(store: store.scope(state: \.tab2, action: \.tab2))
-            } label: {
-                Image(systemName: "star")
-            }
+        VStack {
+            ProfileView(store: store.scope(state: \.game., action: <#T##CaseKeyPath<AppReducer.Action, ChildAction>#>))
+            Spacer()
+            BoardView(store: store.scope(state: \.board, action: \.board))
+            Spacer()
+//            ProfileView(userID: "friend")
         }
     }
 }
 
+// App 전체 상태 정의
 @Reducer
-struct AppFeature {
-    @ObservableState
-    struct State {
-        var tab1 = CounterFeature.State(count: 0)
-        var tab2 = CounterFeature.State(count: 1)
+struct AppReducer {
+  struct State{
+    var game = Game.State()
+    var board = Board.State()
+  }
+  
+  enum Action {
+    case game(Game.Action)
+    case board(Board.Action)
+  }
+  
+  var body: some ReducerOf<Self> {
+    Scope(state: \.game, action: \.game) {
+      Game()
     }
-    
-    enum Action {
-        case tab1(CounterFeature.Action)
-        case tab2(CounterFeature.Action)
+
+  Scope(state: \.board, action: \.board) {
+      Board()
     }
-    
-    var body: some ReducerOf<Self> {
-        Scope(state: \.tab1, action: \.tab1) {
-            CounterFeature()
+
+      Reduce { state, action in
+      switch action {
+      case .board(.delegate(.updateWinnerScore(let player))):
+        if player == .x {
+          return .send(.game(.increasePlayer1Score))
+        } else {
+          return .send(.game(.increasePlayer2Score))
         }
-        
-        Scope(state: \.tab2, action: \.tab2) {
-            CounterFeature()
-        }
-        
-        Reduce { state, action in
-            return .none
-        }
+      default:
+        return .none
+      }
     }
+  }
 }
