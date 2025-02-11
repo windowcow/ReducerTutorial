@@ -15,11 +15,9 @@ struct AppView: View {
     
     var body: some View {
         VStack {
-            ProfileView(store: store.scope(state: \.game., action: <#T##CaseKeyPath<AppReducer.Action, ChildAction>#>))
             Spacer()
             BoardView(store: store.scope(state: \.board, action: \.board))
             Spacer()
-//            ProfileView(userID: "friend")
         }
     }
 }
@@ -27,36 +25,24 @@ struct AppView: View {
 // App 전체 상태 정의
 @Reducer
 struct AppReducer {
-  struct State{
-    var game = Game.State()
-    var board = Board.State()
-  }
-  
-  enum Action {
-    case game(Game.Action)
-    case board(Board.Action)
-  }
-  
-  var body: some ReducerOf<Self> {
-    Scope(state: \.game, action: \.game) {
-      Game()
+    struct State{
+        var game = Game.State()
+        var board = Board.State()
     }
-
-  Scope(state: \.board, action: \.board) {
-      Board()
+    
+    enum Action {
+        case game(Game.Action)
+        case board(Board.Action)
     }
-
-      Reduce { state, action in
-      switch action {
-      case .board(.delegate(.updateWinnerScore(let player))):
-        if player == .x {
-          return .send(.game(.increasePlayer1Score))
-        } else {
-          return .send(.game(.increasePlayer2Score))
+    
+    var body: some ReducerOf<Self> {
+        Scope(state: \.game, action: \.game) {
+            Game()
         }
-      default:
-        return .none
-      }
+        
+        Scope(state: \.board, action: \.board) {
+            Board()
+        }
+        
     }
-  }
 }
