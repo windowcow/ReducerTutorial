@@ -9,6 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct BoardView: View {
+    @State private var shakeAmount: CGFloat = 0
     let store: StoreOf<Board>
     
     var body: some View {
@@ -32,11 +33,10 @@ struct BoardView: View {
                             .onTapGesture {
                                 store.send(.view(.tap(row, col)))
                             }
-                            .sensoryFeedback(.warning, trigger: store.showOccupiedAlert)
+                            .sensoryFeedback(.error, trigger: store.showOccupiedAlert) { $1 == true }
                     }
                 }
             }
         }
     }
 }
-
