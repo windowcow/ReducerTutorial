@@ -51,6 +51,8 @@ struct Board {
             switch action {
             case .cells(.element(id: _, action: .alreadyTaken)):
                 return .none
+            case .cells(.element(id: _, action: .setOwner)):
+                return .send(.evaluate)
             case .cells:
                 return .none
                 

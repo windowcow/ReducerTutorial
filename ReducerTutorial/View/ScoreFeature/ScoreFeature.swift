@@ -10,7 +10,7 @@ import ComposableArchitecture
 
 
 @Reducer
-struct Game {
+struct ScoreFeature {
     @ObservableState
     struct State {
         var player1Score: Int = 0
@@ -18,19 +18,19 @@ struct Game {
     }
     
     enum Action {
-        case increasePlayer1Score
-        case increasePlayer2Score
+        case increaseScore(Player)
         case clearScores
     }
     
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case .increasePlayer1Score:
-                state.player1Score += 1
-                return .none
-            case .increasePlayer2Score:
-                state.player2Score += 1
+            case let .increaseScore(player):
+                if player == .o {
+                    state.player1Score += 1
+                } else if player == .x {
+                    state.player2Score += 1
+                }
                 return .none
             case .clearScores:
                 state.player1Score = 0

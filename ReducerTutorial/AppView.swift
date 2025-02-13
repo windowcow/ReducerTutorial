@@ -26,23 +26,35 @@ struct AppView: View {
 @Reducer
 struct AppReducer {
     struct State{
-        var game = Game.State()
+        var scoreFeature = ScoreFeature.State()
         var board = Board.State()
     }
     
     enum Action {
-        case game(Game.Action)
+        case scoreFeature(ScoreFeature.Action)
         case board(Board.Action)
     }
     
     var body: some ReducerOf<Self> {
-        Scope(state: \.game, action: \.game) {
-            Game()
-        }
-        
         Scope(state: \.board, action: \.board) {
             Board()
         }
         
+        Reduce { state, action in
+            switch action {
+            case let .board(.gameEnd(gameEnd)):
+                switch gameEnd {
+                case let .hasWinner(winner):
+                    return .send(.scoreFeature(.increaseScore(winner)))
+                case .draw:
+                    return .none
+                }
+            case .board:
+                return .none
+            case .scoreFeature:
+                return .none
+            }
+        }
+        ._printChanges()
     }
 }
