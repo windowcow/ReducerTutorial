@@ -13,15 +13,12 @@ struct Board {
     struct State {
         var cells: [[Cell]] = Array(repeating: Array(repeating: .empty, count: 3), count: 3)
         var currentPlayer: Player = .o
-        
         var showOccupiedAlert: Bool = false
-
         var occupiedCellCount: Int {
             cells.flatMap { $0 }
                  .filter { $0 != .empty }
                  .count
         }
-        
     }
     
     @ObservableState
@@ -32,26 +29,21 @@ struct Board {
     }
     
     enum Action: ViewAction {
-        // MARK: - View
         case view(View) // -> evaluate
-
-        @CasePathable
-        enum View: ViewAction {
-            case tap(Int, Int)
-        }
+        case delegate(Delegate)
         
         case setOwner(Player, Int, Int) // nextTurn, Delegate
         case alreadyOccupied
         case resetOccupiedAlert // 애니메이션 상태 리셋
-
         case evaluate // -> setOwner
         case nextTurn
-        
         case newGame
         case clear
         
-        case delegate(Delegate)
-        
+        @CasePathable
+        enum View: ViewAction {
+            case tap(Int, Int)
+        }
         
         @CasePathable
         enum Delegate {
@@ -102,8 +94,7 @@ struct Board {
                 return .send(.clear)
                 
             case .clear:
-                state.cells = Array(repeating: Array(repeating: .empty, count: 3), count: 3)
-                state.currentPlayer = .o
+                state = .init()
                 return .none
             default:
                 return .none
@@ -147,11 +138,3 @@ struct Board {
 extension Board: Equatable {}
 extension Board.State: Equatable {}
 extension Board.Cell: Equatable {}
-
-
-
-
-
-
-
-
