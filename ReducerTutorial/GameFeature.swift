@@ -19,6 +19,7 @@ struct GameFeature {
     enum Action {
         case scoreFeature(ScoreFeature.Action)
         case board(Board.Action)
+        
         case changeCurrentTurnPlayer
         case clearScore
     }
@@ -32,25 +33,26 @@ struct GameFeature {
             switch action {
             case .scoreFeature:
                 return .none
-            case let .board(.gameEnd(gameEnd)):
-                switch gameEnd {
-                case let .hasWinner(winner):
-                    return .send(.scoreFeature(.increaseScore(winner)))
-                case .draw:
-                    return .none
+            case let .board(.delegate(.transition(transitionType))):
+                switch transitionType {
+                case let .end(endReason):
+                    switch endReason {
+                    case let .win(winner):
+                        return .send(.scoreFeature(.increaseScore(winner)))
+                    case .draw:
+                        return .none
+                    }
+                case .playing:
+                    return .send(.board(.clear))
                 }
-            case .board(.nextTurn):
-                return .send(.changeCurrentTurnPlayer)
             case .board:
                 return .none
             case .changeCurrentTurnPlayer:
-                state.$currentTurnPlayer.withLock { currentPlayer in
-                    currentPlayer = currentPlayer == .x ? .o : .x
-                }
                 return .none
             case .clearScore:
                 return .send(.scoreFeature(.clearScores))
             }
+                
         }
         ._printChanges()
     }

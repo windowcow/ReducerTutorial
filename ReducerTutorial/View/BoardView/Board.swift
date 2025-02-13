@@ -12,9 +12,8 @@ struct Board {
     @ObservableState
     struct State {
         var cells: IdentifiedArrayOf<CellFeature.State> = Board.initialCells()
-        var currentPlayer: Player = .o
+        @Shared(.currentTurnPlayer) var currentTurnPlayer: Player = .o
         var stateType: StateType = .playing
-        
     }
     
     @CasePathable
@@ -67,7 +66,9 @@ struct Board {
                 return .send(.nextTurn)
                 
             case .nextTurn:
-                state.currentPlayer = state.currentPlayer.nextPlayer()
+                state.$currentTurnPlayer.withLock { currentPlayer in
+                    currentPlayer = currentPlayer == .x ? .o : .x
+                }
                 return .none
                 
             case .clear:
