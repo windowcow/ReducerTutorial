@@ -28,7 +28,7 @@ struct GameFeature {
         case clearScore
         case clearBoard
         
-        case showAlert
+        case showAlert(Board.StateType.EndReason)
         case alert(PresentationAction<Alert>)
         
         enum Alert {
@@ -58,7 +58,7 @@ struct GameFeature {
                             break
                         }
                         
-                        await send(.showAlert)
+                        await send(.showAlert(endReason))
                     }
                 case .playing:
                     return .send(.clearBoard)
@@ -67,18 +67,32 @@ struct GameFeature {
                 return .none
             case .gameSeat:
                 return .none
-            case .showAlert:
-                state.alert = AlertState {
-                    TextState("OK?")
-                } actions: {
-                    ButtonState(action: .confirmGameResult) {
-                        TextState("OK")
+            case let .showAlert(endReason):
+                switch endReason {
+                case .draw:
+                    state.alert = AlertState {
+                        TextState("무승부")
+                    } actions: {
+                        ButtonState(action: .confirmGameResult) {
+                            TextState("확인")
+                        }
+                    }
+                case let .win(winner):
+                    state.alert = AlertState {
+                        TextState("\(winner == .x ? "X" : "O") 승리!")
+                    } actions: {
+                        ButtonState(action: .confirmGameResult) {
+                            TextState("확인")
+                        }
                     }
                 }
+                
                 return .none
             case .alert(.presented(.confirmGameResult)):
-                
-                return .send(.clearBoard)
+                return .run { send in
+                    await send(.gameSeat(.swapUserSeat))
+                    await send(.clearBoard)
+                }
             case .alert:
                 return .none
             case let .updateWinnerScore(winner):

@@ -84,16 +84,7 @@ struct CellView: View {
     }
 }
 
-struct OccupiedCellView: View {
-    var player: Player
-    
-    var body: some View {
-        Text("\(player == .o ? "O" : "X")")
-            .font(.largeTitle)
-            .bold()
-            .foregroundStyle(.blue)
-    }
-}
+
 
 #Preview {
     CellView(

@@ -12,12 +12,16 @@ struct BoardView: View {
     @State private var shakeAmount: CGFloat = 0
     let store: StoreOf<Board>
     
-    let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 3)
+    let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 3)
     
     var body: some View {
-        LazyVGrid(columns: columns, spacing: 8) {
+        LazyVGrid(columns: columns, spacing: 0) {
             ForEach(store.scope(state: \.cells, action: \.cells), id: \.id) { cellFeatureStore in
                 CellView(store: cellFeatureStore)
+                    .overlay(
+                        Rectangle()
+                            .stroke(Color.gray, lineWidth: 2)
+                    )
             }
         }
         .padding(8)

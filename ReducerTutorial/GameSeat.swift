@@ -26,9 +26,11 @@ struct GameSeat {
         Reduce { state, action in
             switch action {
             case .swapUserSeat:
-                let newXUser = state.oUser
-                state.oUser = state.xUser
-                state.xUser = newXUser
+                let newXUserNickName = state.oUser.nickname
+                let newOUserNickNAme = state.xUser.nickname
+                
+                state.oUser.nickname = newOUserNickNAme
+                state.xUser.nickname = newXUserNickName
                 return .none
             case .clearScore:
                 state.oUser.score = 0
