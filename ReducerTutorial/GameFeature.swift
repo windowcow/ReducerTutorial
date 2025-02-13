@@ -22,6 +22,7 @@ struct GameFeature {
         
         case changeCurrentTurnPlayer
         case clearScore
+        case clearBoard
     }
     
     var body: some ReducerOf<Self> {
@@ -43,7 +44,7 @@ struct GameFeature {
                         return .none
                     }
                 case .playing:
-                    return .send(.board(.clear))
+                    return .send(.clearBoard)
                 }
             case .board:
                 return .none
@@ -51,6 +52,8 @@ struct GameFeature {
                 return .none
             case .clearScore:
                 return .send(.scoreFeature(.clearScores))
+            case .clearBoard:
+                return .send(.board(.clear))
             }
                 
         }
