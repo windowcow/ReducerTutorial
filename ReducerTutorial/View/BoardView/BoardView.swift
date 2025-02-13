@@ -17,23 +17,6 @@ struct BoardView: View {
             ForEach(0..<3, id: \.self) { row in
                 GridRow {
                     ForEach(0..<3, id: \.self) { col in
-                        Circle()
-                            .foregroundStyle(.gray)
-                            .aspectRatio(1, contentMode: .fit)
-                            
-                            .overlay {
-                                let owner = store.cells[row][col]
-                                
-                                if owner == .filled(.o) {
-                                    Text("O")
-                                } else if owner == .filled(.x) {
-                                    Text("X")
-                                }
-                            }
-                            .onTapGesture {
-                                store.send(.view(.tap(row, col)))
-                            }
-                            .sensoryFeedback(.error, trigger: store.showOccupiedAlert) { $1 == true }
                     }
                 }
             }
