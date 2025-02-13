@@ -13,20 +13,35 @@ struct Board {
     struct State {
         var cells: IdentifiedArrayOf<CellFeature.State> = Board.initialCells()
         var currentPlayer: Player = .o
+        var stateType: StateType = .playing
+        
+    }
+    
+    @CasePathable
+    enum StateType {
+        case playing
+        case end(EndReason)
+        
+        @CasePathable
+        enum EndReason {
+            case draw
+            case win(Player)
+        }
     }
 
     enum Action {
         case cells(IdentifiedActionOf<CellFeature>)
-        case evaluate
-        case newGame
-        case clear
-        case gameEnd(GameEnd)
+        
+        case evaluate // -> 그 결과로 StateType을 바꾼다
+        
+        case delegate(Delegate)
+        
         case nextTurn
+        case clear
         
         @CasePathable
-        enum GameEnd {
-            case hasWinner(Player)
-            case draw
+        enum Delegate {
+            case transition(to: StateType)
         }
     }
     
@@ -42,11 +57,11 @@ struct Board {
                 
             case .evaluate:
                 if let winner = checkWinner(board: state.cells) {
-                    return .send(.gameEnd(.hasWinner(winner)))
+                    return .send(.delegate(.transition(to: .end(.win(winner)))))
                 }
                 
                 if occupiedCellCount(for: state) == 9 {
-                    return .send(.gameEnd(.draw))
+                    return .send(.delegate(.transition(to: .end(.draw))))
                 }
                 
                 return .send(.nextTurn)
@@ -55,14 +70,11 @@ struct Board {
                 state.currentPlayer = state.currentPlayer.nextPlayer()
                 return .none
                 
-            case .newGame:
-                return .send(.clear)
-                
-            case .gameEnd:
-                return .none
-                
             case .clear:
                 state = .init()
+                return .none
+                
+            case .delegate:
                 return .none
             }
         }
