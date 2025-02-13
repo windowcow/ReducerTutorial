@@ -15,15 +15,16 @@ struct GameFeature {
         @Shared(.currentTurnPlayer) var currentTurnPlayer = .o
         @Presents var alert: AlertState<Action.Alert>?
         
-        var scoreFeature = ScoreFeature.State()
         var board = Board.State()
+        var gameSeat = GameSeat.State()
     }
     
     enum Action {
-        case scoreFeature(ScoreFeature.Action)
         case board(Board.Action)
+        case gameSeat(GameSeat.Action)
         
         case changeCurrentTurnPlayer
+        case updateWinnerScore(Player)
         case clearScore
         case clearBoard
         
@@ -40,17 +41,19 @@ struct GameFeature {
             Board()
         }
         
+        Scope(state: \.gameSeat, action: \.gameSeat) {
+            GameSeat()
+        }
+        
         Reduce { state, action in
             switch action {
-            case .scoreFeature:
-                return .none
             case let .board(.delegate(.transition(transitionType))):
                 switch transitionType {
                 case let .end(endReason):
                     return .run { send in
                         switch endReason {
                         case let .win(winner):
-                            await send(.scoreFeature(.increaseScore(winner)))
+                            await send(.updateWinnerScore(winner))
                         case .draw:
                             break
                         }
@@ -60,6 +63,10 @@ struct GameFeature {
                 case .playing:
                     return .send(.clearBoard)
                 }
+            case .board:
+                return .none
+            case .gameSeat:
+                return .none
             case .showAlert:
                 state.alert = AlertState {
                     TextState("OK?")
@@ -70,15 +77,18 @@ struct GameFeature {
                 }
                 return .none
             case .alert(.presented(.confirmGameResult)):
+                
                 return .send(.clearBoard)
             case .alert:
                 return .none
-            case .board:
-                return .none
+            case let .updateWinnerScore(winner):
+                return .run {send in 
+                    await send(.gameSeat(.updateWinnerScore(winner)))
+                }
             case .changeCurrentTurnPlayer:
                 return .none
             case .clearScore:
-                return .send(.scoreFeature(.clearScores))
+                return .none
             case .clearBoard:
                 return .send(.board(.clear))
             }
@@ -95,10 +105,15 @@ struct AppView: View {
     
     var body: some View {
         VStack {
+            PlayerInfoView(user: store.gameSeat.xUser)
+                .rotationEffect(.init(degrees: 180), anchor: .center)
             Spacer()
             BoardView(store: store.scope(state: \.board, action: \.board))
             Spacer()
+            PlayerInfoView(user: store.gameSeat.oUser)
         }
         .alert($store.scope(state: \.alert, action: \.alert))
     }
 }
+
+
