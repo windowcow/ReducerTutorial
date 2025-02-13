@@ -11,24 +11,8 @@ import ComposableArchitecture
 struct Board {
     @ObservableState
     struct State {
-        var cells: IdentifiedArrayOf<CellFeature.State> = {
-            var array = IdentifiedArrayOf<CellFeature.State>()
-            
-            for row in 0..<3 {
-                for col in 0..<3 {
-                    let cellState = CellFeature.State(row: row, col: col)
-                    array.append(cellState)
-                }
-            }
-            
-            return array
-        }()
-        
+        var cells: IdentifiedArrayOf<CellFeature.State> = Board.initialCells()
         var currentPlayer: Player = .o
-        var showOccupiedAlert: Bool = false
-        var occupiedCellCount: Int {
-            cells.filter { $0.owner != nil }.count
-        }
     }
 
     enum Action {
@@ -61,7 +45,7 @@ struct Board {
                     return .send(.gameEnd(.hasWinner(winner)))
                 }
                 
-                if state.occupiedCellCount == 9 {
+                if occupiedCellCount(for: state) == 9 {
                     return .send(.gameEnd(.draw))
                 }
                 
@@ -86,6 +70,28 @@ struct Board {
             CellFeature()
         }
         ._printChanges()
+    }
+    
+}
+
+extension Board: Equatable {}
+
+extension Board {
+    private static func initialCells() -> IdentifiedArrayOf<CellFeature.State> {
+        var array = IdentifiedArrayOf<CellFeature.State>()
+        
+        for row in 0..<3 {
+            for col in 0..<3 {
+                let cellState = CellFeature.State(row: row, col: col)
+                array.append(cellState)
+            }
+        }
+        
+        return array
+    }
+
+    private func occupiedCellCount(for state: State) -> Int {
+        return state.cells.filter { $0.owner != nil }.count
     }
     
     private func checkWinner(board: IdentifiedArrayOf<CellFeature.State>) -> Player? {
@@ -124,5 +130,3 @@ struct Board {
         return nil
     }
 }
-
-extension Board: Equatable {}
