@@ -42,7 +42,7 @@ struct CellFeature {
         Reduce { state, action in
             switch action {
             case .tapped:
-                if let owner = state.owner {
+                if let _ = state.owner {
                     return .send(.alreadyTaken)
                 } else {
                     return .send(.setOwner(state.currentTurnPlayer))
