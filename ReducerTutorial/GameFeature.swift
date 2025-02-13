@@ -112,6 +112,7 @@ struct AppView: View {
             Spacer()
             PlayerInfoView(user: store.gameSeat.oUser)
         }
+        .padding()
         .alert($store.scope(state: \.alert, action: \.alert))
     }
 }
