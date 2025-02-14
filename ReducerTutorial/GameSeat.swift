@@ -38,9 +38,17 @@ struct GameSeat {
                 return .none
             case let .updateWinnerScore(winner):
                 if winner == .o {
-                    state.oUser.score += 1
+                    if state.oUser.nickname == "O" {
+                        state.oUser.score += 1
+                    } else {
+                        state.xUser.score += 1
+                    }
                 } else {
-                    state.xUser.score += 1
+                    if state.oUser.nickname == "X" {
+                        state.oUser.score += 1
+                    } else {
+                        state.xUser.score += 1
+                    }
                 }
                 return .none
             }

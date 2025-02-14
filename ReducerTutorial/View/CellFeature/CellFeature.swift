@@ -80,7 +80,7 @@ struct CellView: View {
             .onTapGesture {
                 store.send(.tapped)
             }
-            .sensoryFeedback(.error, trigger: store.animationState.toggle)
+            .sensoryFeedback(.error, trigger: store.owner)
     }
 }
 

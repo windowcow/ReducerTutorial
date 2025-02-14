@@ -7,11 +7,6 @@
 
 import ComposableArchitecture
 
-//@DependencyClient
-//struct User {
-//    
-//}
-
 protocol User {
     var nickname: String { get }
     var score: Int { get }
