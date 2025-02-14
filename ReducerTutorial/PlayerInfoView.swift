@@ -48,7 +48,6 @@ struct PlayerInfoView<T: User>: View {
         // 현재 턴이면 플레이어 고유 색상의 테두리를, 아니면 테두리 없음
         .background(
             Capsule()
-//            RoundedRectangle(cornerRadius: 10)
                 .foregroundStyle(isCurrentTurn ? playerColor.opacity(0.3) : Color.clear)
         )
     }

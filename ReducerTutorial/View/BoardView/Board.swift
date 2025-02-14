@@ -82,7 +82,6 @@ struct Board {
         .forEach(\.cells, action: \.cells) {
             CellFeature()
         }
-        ._printChanges()
     }
     
 }

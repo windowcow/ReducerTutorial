@@ -108,7 +108,6 @@ struct GameFeature {
             }
         }
         .ifLet(\.$alert, action: \.alert)
-        ._printChanges()
     }
 }
 

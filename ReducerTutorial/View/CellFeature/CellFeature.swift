@@ -55,7 +55,6 @@ struct CellFeature {
                 return .none
             }
         }
-        ._printChanges()
     }
 }
 
@@ -83,8 +82,6 @@ struct CellView: View {
             .sensoryFeedback(.error, trigger: store.owner)
     }
 }
-
-
 
 #Preview {
     CellView(

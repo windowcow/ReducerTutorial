@@ -53,6 +53,5 @@ struct GameSeat {
                 return .none
             }
         }
-        ._printChanges()
     }
 }
