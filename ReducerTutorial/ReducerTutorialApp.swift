@@ -13,6 +13,7 @@ struct ReducerTutorialApp: App {
     var body: some Scene {
         WindowGroup {
             AppView()
+                .statusBarHidden(true)
         }
     }
 }
