@@ -71,18 +71,18 @@ struct GameFeature {
                 switch endReason {
                 case .draw:
                     state.alert = AlertState {
-                        TextState("무승부")
+                        TextState("Draw")
                     } actions: {
                         ButtonState(action: .confirmGameResult) {
-                            TextState("확인")
+                            TextState("Confirm")
                         }
                     }
                 case let .win(winner):
                     state.alert = AlertState {
-                        TextState("\(winner == .x ? "X" : "O") 승리!")
+                        TextState("\(winner == .x ? "X" : "O") Wins!")
                     } actions: {
                         ButtonState(action: .confirmGameResult) {
-                            TextState("확인")
+                            TextState("Confirm")
                         }
                     }
                 }
