@@ -22,6 +22,13 @@
 			);
 			target = 88DED4F22D587CD70098E4C2 /* ReducerTutorial */;
 		};
+		88A0F7932D5F14520070F837 /* Exceptions for "ReducerTutorial" folder in "ReducerTutorial" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 88DED4F22D587CD70098E4C2 /* ReducerTutorial */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -35,6 +42,9 @@
 		};
 		88DED4F52D587CD70098E4C2 /* ReducerTutorial */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				88A0F7932D5F14520070F837 /* Exceptions for "ReducerTutorial" folder in "ReducerTutorial" target */,
+			);
 			path = ReducerTutorial;
 			sourceTree = "<group>";
 		};
@@ -284,6 +294,7 @@
 				DEVELOPMENT_TEAM = 9KPHTM749M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReducerTutorial/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "No Ad Tic Tac Toe";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -318,6 +329,7 @@
 				DEVELOPMENT_TEAM = 9KPHTM749M;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ReducerTutorial/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "No Ad Tic Tac Toe";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.games";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
