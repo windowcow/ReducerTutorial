@@ -14,7 +14,25 @@
 		88DED4F32D587CD70098E4C2 /* ReducerTutorial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReducerTutorial.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		887B02C32D5F03DA0046FE39 /* Exceptions for "ci_scripts" folder in "ReducerTutorial" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				macros.json,
+			);
+			target = 88DED4F22D587CD70098E4C2 /* ReducerTutorial */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		887B02BF2D5F03160046FE39 /* ci_scripts */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				887B02C32D5F03DA0046FE39 /* Exceptions for "ci_scripts" folder in "ReducerTutorial" target */,
+			);
+			path = ci_scripts;
+			sourceTree = "<group>";
+		};
 		88DED4F52D587CD70098E4C2 /* ReducerTutorial */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ReducerTutorial;
@@ -37,6 +55,7 @@
 		88DED4EA2D587CD70098E4C2 = {
 			isa = PBXGroup;
 			children = (
+				887B02BF2D5F03160046FE39 /* ci_scripts */,
 				88DED4F52D587CD70098E4C2 /* ReducerTutorial */,
 				88DED4F42D587CD70098E4C2 /* Products */,
 			);
@@ -66,6 +85,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				887B02BF2D5F03160046FE39 /* ci_scripts */,
 				88DED4F52D587CD70098E4C2 /* ReducerTutorial */,
 			);
 			name = ReducerTutorial;
