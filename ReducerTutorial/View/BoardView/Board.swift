@@ -16,17 +16,6 @@ struct Board {
         var stateType: StateType = .playing
     }
     
-    @CasePathable
-    enum StateType {
-        case playing
-        case end(EndReason)
-        
-        @CasePathable
-        enum EndReason {
-            case draw
-            case win(Player)
-        }
-    }
 
     enum Action {
         case cells(IdentifiedActionOf<CellFeature>)
