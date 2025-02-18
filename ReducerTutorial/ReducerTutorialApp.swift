@@ -12,7 +12,10 @@ import ComposableArchitecture
 struct ReducerTutorialApp: App {
     var body: some Scene {
         WindowGroup {
-            AppView()
+            VStack {
+                
+            }
+//            AppView()
                 .statusBarHidden(true)
         }
     }

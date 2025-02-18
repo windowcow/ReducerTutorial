@@ -6,11 +6,12 @@
 //
 
 import ComposableArchitecture
+import SwiftUI
 
 @Reducer
 struct BoardSettings {
     @ObservableState
-    struct State {
+    struct State: Equatable {
         var rowCount: Int
         var colCount: Int
     }
@@ -49,4 +50,34 @@ struct BoardSettings {
             }
         }
     }
+}
+
+
+private struct BoardSettingsView: View {
+    let store: StoreOf<BoardSettings>
+    
+    var body: some View {
+        VStack {
+            HStack {
+                Text("Rows: \(store.rowCount)")
+                Button("-") { store.send(.decrementRowCount) }
+                Button("+") { store.send(.incrementRowCount) }
+            }
+            HStack {
+                Text("Columns: \(store.colCount)")
+                Button("-") { store.send(.decrementColCount) }
+                Button("+") { store.send(.incrementColCount) }
+            }
+        }
+    }
+}
+
+#Preview {
+    BoardSettingsView(
+        store: Store(
+            initialState: BoardSettings.State(rowCount: 3, colCount: 3)
+        ) {
+            BoardSettings()
+        }
+    )
 }
