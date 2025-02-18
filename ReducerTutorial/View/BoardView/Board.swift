@@ -11,7 +11,7 @@ import ComposableArchitecture
 struct Board {
     @ObservableState
     struct State {
-        var cells: IdentifiedArrayOf<Cell.State> = Board.initialCells()
+        var cells: IdentifiedArrayOf<Cell.State> = InitialCellsBuilder.build()
     }
     
     enum Action {
@@ -60,19 +60,6 @@ struct Board {
 extension Board: Equatable {}
 
 extension Board {
-    private static func initialCells() -> IdentifiedArrayOf<Cell.State> {
-        var array = IdentifiedArrayOf<Cell.State>()
-        
-        for row in 0..<3 {
-            for col in 0..<3 {
-                let cellState = Cell.State(row: row, col: col)
-                array.append(cellState)
-            }
-        }
-        
-        return array
-    }
-
     private func occupiedCellCount(for state: State) -> Int {
         return state.cells.filter { $0.owner != nil }.count
     }
