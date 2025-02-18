@@ -35,7 +35,7 @@ struct Board {
             case .cells:
                 return .none
             case .evaluate:
-                if let winner = checkWinner(board: state.cells) {
+                if let winner = BoardChecker.checkWinner(board: state.cells) {
                     return .send(.delegate(.hasWinner(winner)))
                 }
                 if occupiedCellCount(for: state) == 9 {
@@ -78,38 +78,6 @@ extension Board {
     }
     
     private func checkWinner(board: IdentifiedArrayOf<Cell.State>) -> Player? {
-        for row in 0..<3 {
-            if let cell0 = board.first(where: { $0.row == row && $0.col == 0 }),
-               let cell1 = board.first(where: { $0.row == row && $0.col == 1 }),
-               let cell2 = board.first(where: { $0.row == row && $0.col == 2 }),
-               let owner = cell0.owner, owner == cell1.owner, owner == cell2.owner {
-                return owner
-            }
-        }
-        
-        for col in 0..<3 {
-            if let cell0 = board.first(where: { $0.row == 0 && $0.col == col }),
-               let cell1 = board.first(where: { $0.row == 1 && $0.col == col }),
-               let cell2 = board.first(where: { $0.row == 2 && $0.col == col }),
-               let owner = cell0.owner, owner == cell1.owner, owner == cell2.owner {
-                return owner
-            }
-        }
-        
-        if let cell0 = board.first(where: { $0.row == 0 && $0.col == 0 }),
-           let cell1 = board.first(where: { $0.row == 1 && $0.col == 1 }),
-           let cell2 = board.first(where: { $0.row == 2 && $0.col == 2 }),
-           let owner = cell0.owner, owner == cell1.owner, owner == cell2.owner {
-            return owner
-        }
-        
-        if let cell0 = board.first(where: { $0.row == 0 && $0.col == 2 }),
-           let cell1 = board.first(where: { $0.row == 1 && $0.col == 1 }),
-           let cell2 = board.first(where: { $0.row == 2 && $0.col == 0 }),
-           let owner = cell0.owner, owner == cell1.owner, owner == cell2.owner {
-            return owner
-        }
-        
-        return nil
+        return BoardChecker.checkWinner(board: board)
     }
 }
