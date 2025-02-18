@@ -30,6 +30,7 @@ struct BoardSettings {
                 if state.rowCount < 8 {
                     state.rowCount += 1
                 }
+                
                 return .none
             case .decrementRowCount:
                 if state.rowCount > 3 {
@@ -72,8 +73,38 @@ private struct BoardSettingsView: View {
     }
 }
 
+private struct BoardView2: View {
+    let store: StoreOf<BoardSettings>
+
+    var body: some View {
+        VStack(spacing: 1) {
+            ForEach(0..<store.rowCount, id: \.self) { _ in
+                HStack(spacing: 1) {
+                    ForEach(0..<store.colCount, id: \.self) { _ in
+                        Rectangle()
+                            .fill(.blue.opacity(0.3))
+                            .aspectRatio(1, contentMode: .fit)
+                    }
+                }
+            }
+        }
+        .padding()
+    }
+}
+
+private struct CombinedBoardView: View {
+    let store: StoreOf<BoardSettings>
+    
+    var body: some View {
+        VStack {
+            BoardSettingsView(store: store)
+            BoardView2(store: store)
+        }
+    }
+}
+
 #Preview {
-    BoardSettingsView(
+    CombinedBoardView(
         store: Store(
             initialState: BoardSettings.State(rowCount: 3, colCount: 3)
         ) {

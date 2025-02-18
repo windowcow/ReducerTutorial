@@ -51,7 +51,7 @@ struct CountDownFeature {
     static let timerCancelID = "timerCancelID"
 }
 
-struct CountDownFeatureView: View {
+private struct CountDownFeatureView: View {
     let store: StoreOf<CountDownFeature>
     
     var body: some View {
