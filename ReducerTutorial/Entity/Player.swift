@@ -12,15 +12,6 @@ enum Player: Identifiable {
     case o
     case x
     
-    func nextPlayer() -> Player {
-        switch self {
-        case .o:
-            return .x
-        case .x:
-            return .o
-        }
-    }
-    
     var id: Self { self }
 }
 
