@@ -10,62 +10,47 @@ import ComposableArchitecture
 
 
 @Reducer
-struct CellFeature {
+struct Cell {
     @ObservableState
     struct State {
         let row: Int
         let col: Int
         @Shared(.currentTurnPlayer) var currentTurnPlayer: Player = .o
         var owner: Player?
-        var animationState = AnimationState()
-        
-        struct AnimationState {
-            var toggle = false
-            var offset: CGFloat = 0
-        }
     }
     
     enum Action {
         case tapped
-        case setOwner(Player)
         case alreadyTaken
-        case animation(Animation)
-        
-        @CasePathable
-        enum Animation {
-            case shakes
-        }
+        case setOwner(Player)
     }
     
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .tapped:
-                if let _ = state.owner {
-                    return .send(.alreadyTaken)
-                } else {
-                    return .send(.setOwner(state.currentTurnPlayer))
-                }
+                let action: Action = state.owner == nil ?
+                    .setOwner(state.currentTurnPlayer) :
+                    .alreadyTaken
+                return .send(action)
+            case .alreadyTaken:
+                return .none
             case let .setOwner(currentTurnPlayer):
                 state.owner = currentTurnPlayer
-                return .none
-            case .alreadyTaken:
-                return .send(.animation(.shakes), animation: .linear)
-            case .animation(.shakes):
                 return .none
             }
         }
     }
 }
 
-extension CellFeature.State: Identifiable {
+extension Cell.State: Identifiable {
     var id: Int {
-        row * 10 + col
+        [row, col].hashValue
     }
 }
 
 struct CellView: View {
-    let store: StoreOf<CellFeature>
+    let store: StoreOf<Cell>
     
     var body: some View {
         Rectangle()
@@ -85,8 +70,8 @@ struct CellView: View {
 
 #Preview {
     CellView(
-        store: Store(initialState: CellFeature.State(row: 0, col: 0)) {
-            CellFeature()
+        store: Store(initialState: Cell.State(row: 0, col: 0)) {
+            Cell()
         }
     )
 }

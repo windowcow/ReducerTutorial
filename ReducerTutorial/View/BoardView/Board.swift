@@ -13,7 +13,6 @@ struct Board {
     struct State {
         var cells: IdentifiedArrayOf<CellFeature.State> = Board.initialCells()
         @Shared(.currentTurnPlayer) var currentTurnPlayer: Player = .o
-        var stateType: StateType = .playing
     }
     
 
