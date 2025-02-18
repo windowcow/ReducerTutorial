@@ -10,7 +10,7 @@ import ComposableArchitecture
 import SwiftUI
 
 @Reducer
-struct CountDownFeature {
+struct CountDown {
     @ObservableState
     struct State {
         var countDown: TimeInterval
@@ -18,8 +18,14 @@ struct CountDownFeature {
     
     enum Action {
         case onAppear
+        case startTimer
         case timerTicked
-        case timerFinished
+        case stopTimer
+        case delegate(Delegate)
+        
+        enum Delegate {
+            case timerFinished
+        }
     }
     
     @Dependency(\.suspendingClock) var clock
@@ -28,21 +34,27 @@ struct CountDownFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
+                return .send(.startTimer)
+                
+            case .startTimer:
                 return .run { send in
                     for await _ in clock.timer(interval: .seconds(1)) {
                         await send(.timerTicked)
                     }
                 }
-                .cancellable(id: CountDownFeature.timerCancelID)
+                .cancellable(id: CountDown.timerCancelID)
                 
             case .timerTicked:
-                state.countDown -= 1
-                if state.countDown <= 0 {
-                    return .concatenate(.cancel(id: CountDownFeature.timerCancelID), .send(.timerFinished))
+                if state.countDown > 0 {
+                    state.countDown -= 1
+                    return .none
+                } else {
+                    return .concatenate(.send(.stopTimer), .send(.delegate(.timerFinished)))
                 }
-                return .none
+            case .stopTimer:
+                return .cancel(id: CountDown.timerCancelID)
                 
-            case .timerFinished:
+            case .delegate:
                 return .none
             }
         }
@@ -51,8 +63,8 @@ struct CountDownFeature {
     static let timerCancelID = "timerCancelID"
 }
 
-private struct CountDownFeatureView: View {
-    let store: StoreOf<CountDownFeature>
+private struct CountDownView: View {
+    let store: StoreOf<CountDown>
     
     var body: some View {
         VStack {
@@ -72,10 +84,10 @@ private struct CountDownFeatureView: View {
 }
 
 #Preview {
-    CountDownFeatureView(
+    CountDownView(
         store: Store(
-            initialState: CountDownFeature.State(countDown: 10),
-            reducer: {CountDownFeature()}
+            initialState: CountDown.State(countDown: 10),
+            reducer: {CountDown()}
         )
     )
 }

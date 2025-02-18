@@ -12,8 +12,8 @@ import SwiftUI
 struct BoardSettings {
     @ObservableState
     struct State: Equatable {
-        var rowCount: Int
-        var colCount: Int
+        var rowCount: Int = 3
+        var colCount: Int = 3
     }
     
     enum Action {

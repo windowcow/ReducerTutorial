@@ -12,6 +12,10 @@ struct Board {
     @ObservableState
     struct State {
         var cells: IdentifiedArrayOf<Cell.State> = InitialCellsBuilder.build()
+        
+        init(row: Int, col: Int) {
+            self.cells = InitialCellsBuilder.build(rows: row, cols: col)
+        }
     }
     
     enum Action {
@@ -44,7 +48,6 @@ struct Board {
                 return .none
                 
             case .clear:
-                state = .init()
                 return .none
             case .delegate:
                 return .none
