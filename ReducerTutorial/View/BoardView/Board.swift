@@ -11,64 +11,47 @@ import ComposableArchitecture
 struct Board {
     @ObservableState
     struct State {
-        var cells: IdentifiedArrayOf<CellFeature.State> = Board.initialCells()
-        @Shared(.currentTurnPlayer) var currentTurnPlayer: Player = .o
+        var cells: IdentifiedArrayOf<Cell.State> = Board.initialCells()
     }
     
-
     enum Action {
-        case cells(IdentifiedActionOf<CellFeature>)
-        
-        case evaluate // -> 그 결과로 StateType을 바꾼다
+        case cells(IdentifiedActionOf<Cell>)
+        case evaluate
+        case clear
         
         case delegate(Delegate)
         
-        case nextTurn
-        case clear
-        
-        @CasePathable
         enum Delegate {
-            case transition(to: StateType)
+            case hasWinner(Player)
+            case draw
         }
     }
     
     var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case .cells(.element(id: _, action: .alreadyTaken)):
-                return .none
             case .cells(.element(id: _, action: .setOwner)):
                 return .send(.evaluate)
             case .cells:
                 return .none
-                
             case .evaluate:
                 if let winner = checkWinner(board: state.cells) {
-                    return .send(.delegate(.transition(to: .end(.win(winner)))))
+                    return .send(.delegate(.hasWinner(winner)))
                 }
-                
                 if occupiedCellCount(for: state) == 9 {
-                    return .send(.delegate(.transition(to: .end(.draw))))
-                }
-                
-                return .send(.nextTurn)
-                
-            case .nextTurn:
-                state.$currentTurnPlayer.withLock { currentPlayer in
-                    currentPlayer = currentPlayer == .x ? .o : .x
+                    return .send(.delegate(.draw))
                 }
                 return .none
                 
             case .clear:
                 state = .init()
                 return .none
-                
             case .delegate:
                 return .none
             }
         }
         .forEach(\.cells, action: \.cells) {
-            CellFeature()
+            Cell()
         }
     }
     
@@ -77,12 +60,12 @@ struct Board {
 extension Board: Equatable {}
 
 extension Board {
-    private static func initialCells() -> IdentifiedArrayOf<CellFeature.State> {
-        var array = IdentifiedArrayOf<CellFeature.State>()
+    private static func initialCells() -> IdentifiedArrayOf<Cell.State> {
+        var array = IdentifiedArrayOf<Cell.State>()
         
         for row in 0..<3 {
             for col in 0..<3 {
-                let cellState = CellFeature.State(row: row, col: col)
+                let cellState = Cell.State(row: row, col: col)
                 array.append(cellState)
             }
         }
@@ -94,7 +77,7 @@ extension Board {
         return state.cells.filter { $0.owner != nil }.count
     }
     
-    private func checkWinner(board: IdentifiedArrayOf<CellFeature.State>) -> Player? {
+    private func checkWinner(board: IdentifiedArrayOf<Cell.State>) -> Player? {
         for row in 0..<3 {
             if let cell0 = board.first(where: { $0.row == row && $0.col == 0 }),
                let cell1 = board.first(where: { $0.row == row && $0.col == 1 }),
